@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integration Bee 응원하기</title>
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+<body>
+    <header>
+        <h1>Integration Bee 응원하기</h1>
+        <nav>
+            <a href="/">홈</a>
+            <a href="/login">로그인</a>
+            <a href="/register">회원가입</a>
+            <a href="/dashboard">대시보드</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="bracket">
+            {% for round in rounds %}
+                <h2>라운드 {{ loop.index }}</h2>
+                <ul>
+                    {% for match in round %}
+                    <li>
+                        <strong>{{ match.team1 }} vs {{ match.team2 }}</strong>
+                        <p>응원: {{ match.team1_bets }} vs {{ match.team2_bets }}</p>
+
+                        {% if match.result %}
+                            <p class="winner">승자: {{ match.result }}</p>
+                        {% else %}
+                            <p class="deadline">응원 마감: {{ match.bet_deadline }}</p>
+
+                            {% if session.user_id %}
+                                <form action="{{ url_for('bet') }}" method="POST">
+                                    <input type="hidden" name="match_id" value="{{ match.id }}">
+                                    <label>
+                                        응원 정성:
+                                        <input type="number" name="bet_amount" min="1" required>
+                                    </label>
+                                    <button type="submit" name="chosen_team" value="{{ match.team1 }}">
+                                        {{ match.team1 }}에 응원
+                                    </button>
+                                    <button type="submit" name="chosen_team" value="{{ match.team2 }}">
+                                        {{ match.team2 }}에 응원
+                                    </button>
+                                </form>
+                            {% else %}
+                                <p class="login-warning">응원하려면 <a href="/login">로그인</a>하세요.</p>
+                            {% endif %}
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+            {% endfor %}
+        </div>
+    </main>
+</body>
+</html>

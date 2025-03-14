@@ -1,0 +1,94 @@
+<!-- dashboard.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>대시보드</title>
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+<body>
+    <header>
+        <h1>대시보드</h1>
+        <nav>
+            <a href="/bracket">브라켓 보기</a>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <h2>보유 정성: {{ user.tokens }}</h2>
+        </section>
+        <!-- 🔹 응원 가능한 경기 목록 -->
+        <section class="available-bets">
+            <h2>응원 가능한 경기</h2>
+            <table>
+                <tr>
+                    <th>경기</th>
+                    <th>현재 응원 (팀1 vs 팀2)</th>
+                    <th>응원 마감</th>
+                    <th>응원하기</th>
+                </tr>
+                {% for match in matches %}
+                <tr>
+                    <td>{{ match.team1 }} vs {{ match.team2 }}</td>
+                    <td>{{ match.team1_bets }} vs {{ match.team2_bets }}</td>
+                    <td>{{ match.bet_deadline }}</td>
+                    <td>{{ match.ratio_text }}</td>
+                    <td>
+                        <form action="{{ url_for('bet') }}" method="POST">
+                            <input type="hidden" name="match_id" value="{{ match.id }}">
+                            <label>
+                                정성:
+                                <input type="number" name="bet_amount" min="1" required>
+                            </label>
+                            <button type="submit" name="chosen_team" value="{{ match.team1 }}">
+                                {{ match.team1 }} 응원
+                            </button>
+                            <button type="submit" name="chosen_team" value="{{ match.team2 }}">
+                                {{ match.team2 }} 응원
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </section>
+        <section class="betting">
+            <h2>내 응원 내역</h2>
+            <table>
+                <tr>
+                    <th>경기</th>
+                    <th>응원한 팀</th>
+                    <th>응원 정성</th>
+                    <th>상태</th>
+                    <th>취소</th>
+                </tr>
+                {% for bet in user_bets %}
+                <tr>
+                    <td>{{ bet.team1 }} vs {{ bet.team2 }}</td>
+                    <td>{{ bet.chosen_team }}</td>
+                    <td>{{ bet.bet_amount }}</td>
+                    <td>
+                        {% if bet.result %}
+                            <span class="finished">결과: {{ bet.result }}</span>
+                        {% else %}
+                            <span class="ongoing">진행 중</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if not bet.result %}
+                            <form action="{{ url_for('cancel_bet') }}" method="POST">
+                                <input type="hidden" name="bet_id" value="{{ bet.bet_id }}">
+                                <button type="submit">취소</button>
+                            </form>
+                        {% else %}
+                            <span>-</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </section>
+    </main>
+</body>
+</html>

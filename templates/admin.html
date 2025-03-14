@@ -1,0 +1,98 @@
+<!-- admin.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 페이지</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <h1>관리자 페이지</h1>
+        <nav>
+            <a href="/dashboard">대시보드</a>
+            <a href="/logout">로그아웃</a>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <h2>경기 관리</h2>
+            <form action="/admin/add_match" method="POST">
+                <input type="text" name="team1" placeholder="팀1" required>
+                <input type="text" name="team2" placeholder="팀2" required>
+                <input type="datetime-local" name="bet_deadline" required>
+                <button type="submit">경기 추가</button>
+            </form>
+            <table>
+                <tr>
+                    <th>경기</th>
+                    <th>응원 마감</th>
+                    <th>수정</th>
+                    <th>삭제</th>
+                </tr>
+                {% for match in matches %}
+                <tr>
+                    <td>{{ match.team1 }} vs {{ match.team2 }}</td>
+                    <td>{{ match.bet_deadline }}</td>
+                    <td>
+                        <form action="/admin/edit_match" method="POST">
+                            <input type="hidden" name="match_id" value="{{ match.id }}">
+                            <input type="text" name="team1" value="{{ match.team1 }}" required>
+                            <input type="text" name="team2" value="{{ match.team2 }}" required>
+                            <input type="datetime-local" name="bet_deadline" value="{{ match.bet_deadline }}" required>
+                            <button type="submit">수정</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form action="/admin/delete_match" method="POST">
+                            <input type="hidden" name="match_id" value="{{ match.id }}">
+                            <button type="submit">삭제</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </section>
+
+        <section>
+            <h2>응원 관리</h2>
+            <table>
+                <tr>
+                    <th>경기</th>
+                    <th>응원 정성</th>
+                    <th>응원 마감</th>
+                    <th>결과 입력</th>
+                </tr>
+                {% for match in matches %}
+                <tr>
+                    <td>{{ match.team1 }} vs {{ match.team2 }}</td>
+                    <td>{{ match.team1_bets }} vs {{ match.team2_bets }}</td>
+                    <td>
+                        {% if not match.result %}
+                            <form action="/admin/close_betting" method="POST">
+                                <input type="hidden" name="match_id" value="{{ match.id }}">
+                                <button type="submit">응원 마감</button>
+                            </form>
+                        {% else %}
+                            마감됨
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if not match.result %}
+                            <form action="/admin/set_result" method="POST">
+                                <input type="hidden" name="match_id" value="{{ match.id }}">
+                                <input type="text" name="result" placeholder="승리 팀 입력" required>
+                                <button type="submit">결과 입력</button>
+                            </form>
+                        {% else %}
+                            승자: {{ match.result }}
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </section>
+    </main>
+</body>
+</html>

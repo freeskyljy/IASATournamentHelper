@@ -1,0 +1,24 @@
+<!-- login.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인</title>
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+<body>
+    <header>
+        <h1>로그인</h1>
+    </header>
+    <main>
+        <form action="/login" method="post">
+            <label for="student_id">학번:</label>
+            <input type="number" name="student_id" required>
+            <label for="password">비밀번호:</label>
+            <input type="password" name="password" required>
+            <button type="submit">로그인</button>
+        </form>
+    </main>
+</body>
+</html>
