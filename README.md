@@ -1,2 +1,2 @@
 # IASATournamentHelper
-Helper website for IASA
+Helper website for IASA.
