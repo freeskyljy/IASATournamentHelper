@@ -4,7 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 
 app = Flask(__name__)
-app.secret_key = 'supersecretkey'  # 보안을 위해 변경 필요
+app.secret_key = b'\xc7<v\xad\xc9\x99\x1fl\xbaLx\x8c'  # 보안을 위해 변경 필요
 
 
 def get_db_connection():
